@@ -1,5 +1,9 @@
 package main
 
-func  main()  {
-	
+import "github.com/komblog/banking/app"
+
+func main() {
+
+	app.StartServer()
+
 }
