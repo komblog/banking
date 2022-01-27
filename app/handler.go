@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"net/http"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 type Customer struct {
@@ -12,17 +14,28 @@ type Customer struct {
 	ZipCode string `json:"zip_code"`
 }
 
-func GetAllCustomer(w http.ResponseWriter, r *http.Request) {
+func GetAllCustomer(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	customer := []Customer{
 		{Name: "Hery", City: "Sibolga", ZipCode: "22522"},
 		{Name: "Gabriel", City: "Kolang", ZipCode: "22352"},
 	}
 
-	if r.Header.Get("Content-Type") == "application/xml" {
-		w.Header().Add("Content-Type", "application/xml")
-		xml.NewEncoder(w).Encode(customer)
+	if request.Header.Get("Content-Type") == "application/xml" {
+		writer.Header().Add("Content-Type", "application/xml")
+		encoder := xml.NewEncoder(writer)
+		err := encoder.Encode(&customer)
+
+		if err != nil {
+			panic(err)
+		}
+
 	} else {
-		w.Header().Add("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(customer)
+		writer.Header().Add("Content-Type", "application/json")
+		encoder := json.NewEncoder(writer)
+		err := encoder.Encode(&customer)
+
+		if err != nil {
+			panic(err)
+		}
 	}
 }

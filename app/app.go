@@ -1,11 +1,22 @@
 package app
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/julienschmidt/httprouter"
+)
 
 func StartServer() {
-	http.HandleFunc("/api/customers", GetAllCustomer)
+	router := httprouter.New()
+	router.GET("/api/customers", GetAllCustomer)
+	router.GET("/api/time", GetCurrentTime)
 
-	err := http.ListenAndServe("localhost:8005", nil)
+	server := http.Server{
+		Addr:    "localhost:8005",
+		Handler: router,
+	}
+
+	err := server.ListenAndServe()
 	if err != nil {
 		panic(err)
 	}
